@@ -23,15 +23,11 @@ export const userRoutes = (req: IncomingMessage, res: ServerResponse) => {
       res.statusCode = 404;
       return res.end('User not found');
     }
-  }
-
-  if (pathname === '/api/users' && req.method === 'GET') {
+  } else if (pathname === '/api/users' && req.method === 'GET') {
     res.statusCode = 200;
     res.setHeader('Content-Type', 'application/json');
     return res.end(JSON.stringify(users));
-  }
-
-  if (pathname === '/api/users' && req.method === 'POST') {
+  } else if (pathname === '/api/users' && req.method === 'POST') {
     let body = '';
     req.on('data', (chunk) => {
       body += chunk.toString();
@@ -76,9 +72,7 @@ export const userRoutes = (req: IncomingMessage, res: ServerResponse) => {
         res.end("Server error");
       }
     })
-  }
-
-  if (pathname?.startsWith('/api/users/') && req.method === 'PUT') {
+  } else if (pathname?.startsWith('/api/users/') && req.method === 'PUT') {
     const id = pathname.split('/').pop();
     if (!id || !validate(id)) {
       res.statusCode = 400;
@@ -121,7 +115,7 @@ export const userRoutes = (req: IncomingMessage, res: ServerResponse) => {
         users[userInd] = editedUser;
         res.statusCode = 200;
         const responseBody = {
-          message: "User created successfully",
+          message: "User updated successfully",
           user: {
             id: editedUser.id,
             username: editedUser.username,
@@ -136,9 +130,7 @@ export const userRoutes = (req: IncomingMessage, res: ServerResponse) => {
         res.end("Server error");
       }
     })
-  }
-
-  if (pathname?.startsWith('/api/users/') && req.method === 'DELETE') {
+  } else if (pathname?.startsWith('/api/users/') && req.method === 'DELETE') {
     const id = pathname.split('/').pop();
     if (!id || !validate(id)) {
       res.statusCode = 400;
@@ -155,10 +147,10 @@ export const userRoutes = (req: IncomingMessage, res: ServerResponse) => {
     users.splice(userInd, 1);
 
     res.statusCode = 204;
-    return res.end('User is deleted'); 
+    return res.end();
+  } else {
+    res.statusCode = 404;
+    return res.end('Requested URL does not exist'); 
   }
-
-  res.statusCode = 404;
-  return res.end('Route not found'); 
 };
 
